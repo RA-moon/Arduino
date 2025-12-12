@@ -1,0 +1,36 @@
+#include "animation_manager.h"
+#include "animtated_circles.h"
+#include "animtated_lines.h"
+#include "animtated_circles_reversed.h"
+#include "animtated_lines_reversed.h"
+#include "animtated_rotatinglines.h"
+#include "animtated_rotatinglines_reversed.h"
+#include <Arduino.h>
+
+using FrameFunction = std::vector<std::vector<int>>(*)();
+
+static unsigned long lastSwitchTime = 0;
+static int currentAnimation = 0;
+static std::vector<std::vector<int>> activeFrames;
+
+static FrameFunction animations[] = {
+    getAnimationFramesCircles,
+    getAnimationFramesLines,
+    getAnimationFramesCirclesReversed,
+    getAnimationFramesLinesReversed,
+    getAnimationFramesRotatingLines,
+    getAnimationFramesRotatingLinesReversed
+};
+
+const std::vector<std::vector<int>>& getCurrentAnimationFrames() {
+    return activeFrames;
+}
+
+void updateAnimationSwitch() {
+    unsigned long now = millis();
+    if (now - lastSwitchTime >= 10000 || activeFrames.empty()) {
+        lastSwitchTime = now;
+        currentAnimation = (currentAnimation + 1) % (sizeof(animations) / sizeof(animations[0]));
+        activeFrames = animations[currentAnimation]();
+    }
+}
