@@ -6,7 +6,7 @@
 // LED Config
 /////////////////////
 
-#define LED_PIN         2
+#define LED_PIN         20
 #define NUM_LEDS        1440
 #define LED_TYPE        WS2812B
 #define COLOR_ORDER     GRB
